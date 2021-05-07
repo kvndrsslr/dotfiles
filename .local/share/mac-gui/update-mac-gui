@@ -1,0 +1,30 @@
+#!/bin/bash
+UIDIR=/Users/kvn/.local/share/mac-gui
+mkdir -p "${UIDIR}/livemount"
+mkdir -p "${UIDIR}/current"
+mkdir -p "${UIDIR}/modded"
+sudo /sbin/mount -o nobrowse -t apfs /dev/disk1s10 "${UIDIR}/livemount"
+sudo cp "${UIDIR}/livemount/System/Library/CoreServices/SystemAppearance.bundle/Contents/Resources/"*Aqua* "${UIDIR}/current"
+md5 "${UIDIR}/backup/"* | sed -E 's/^.*= //' > "${UIDIR}/backup.md5"
+md5 "${UIDIR}/current/"* | sed -E 's/^.*= //' > "${UIDIR}/current.md5"
+md5 "${UIDIR}/modded/"* | sed -E 's/^.*= //' > "${UIDIR}/modded.md5"
+if diff "${UIDIR}/current.md5" "${UIDIR}/modded.md5"; then
+  echo "no changes since last patch, no actions needed"
+else
+  if diff "${UIDIR}/current.md5" "${UIDIR}/backup.md5"; then
+    echo "no changes to files since last macOS update, skip modding and perform patch"
+  else
+    echo "changes to files since last macOS update, need to perform modding again"
+  fi
+fi
+if [[ $1 == "mod" ]]; then
+  sudo cp "${UIDIR}/current/"* "${UIDIR}/modded/"
+  open "${UIDIR}/modded"
+  open -a ThemeEngine
+fi
+if [[ $1 == "perform" ]]; then
+  sudo mv "${UIDIR}/current/"* "${UIDIR}/backup/"
+  sudo cp "${UIDIR}/modded/"* "${UIDIR}/livemount/System/Library/CoreServices/SystemAppearance.bundle/Contents/Resources/"
+  sudo /usr/sbin/bless --mount "${UIDIR}/livemount/" --bootefi --create-snapshot
+fi
+sudo /sbin/umount "${UIDIR}/livemount"

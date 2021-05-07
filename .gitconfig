@@ -1,5 +1,16 @@
 [user]
 	name = Kevin Dreßler
 	email = kvndrsslr@gmail.com
-[include]
-	include = ~/.gitcredentialconfig
+	signingkey = C1F3E3D58E9940FC7FEAA4F0076A0E0B57FB8F72
+[credential]
+    helper = osxkeychain
+[pull]
+	rebase = true
+[commit]
+	gpgsign = true
+[gpg]
+	program = /usr/local/MacGPG2/bin/gpg2
+[tag]
+	forceSignAnnotated = true
+[init]
+	defaultBranch = main

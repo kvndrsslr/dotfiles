@@ -1,0 +1,515 @@
+# Configuration for Alacritty, the GPU enhanced terminal emulator.
+
+# Any items in the `env` entry below will be added as
+# environment variables. Some entries may override variables
+# set by alacritty itself.
+#env:
+  # TERM variable
+  #
+  # This value is used to set the `$TERM` environment variable for
+  # each instance of Alacritty. If it is not present, alacritty will
+  # check the local terminfo database and use `alacritty` if it is
+  # available, otherwise `xterm-256color` is used.
+  #TERM: xterm-256color
+
+window:
+  # Window dimensions (changes require restart)
+  #
+  # Specified in number of columns/lines, not pixels.
+  # If both are `0`, this setting is ignored.
+  dimensions:
+    columns: 0
+    lines: 0
+
+  # Window position (changes require restart)
+  #
+  # Specified in number of pixels.
+  # If the position is not set, the window manager will handle the placement.
+  #position:
+  #  x: 0
+  #  y: 0
+
+  # Window padding (changes require restart)
+  #
+  # Blank space added around the window in pixels. This padding is scaled
+  # by DPI and the specified value is always added at both opposing sides.
+  padding:
+    x: 2
+    y: 3
+
+  # Spread additional padding evenly around the terminal content.
+  dynamic_padding: true
+
+  # Window decorations
+  #
+  # Values for `decorations`:
+  #     - full: Borders and title bar
+  #     - none: Neither borders nor title bar
+  #
+  # Values for `decorations` (macOS only):
+  #     - transparent: Title bar, transparent background and title bar buttons
+  #     - buttonless: Title bar, transparent background, but no title bar buttons
+  decorations: none
+
+  # When true, alacritty starts maximized.
+  #startup_mode: Windowed
+
+scrolling:
+  # Maximum number of lines in the scrollback buffer.
+  # Specifying '0' will disable scrolling.
+  history: 0
+
+  # Number of lines the viewport will move for every line scrolled when
+  # scrollback is enabled (history > 0).
+  multiplier: 0
+
+
+# Spaces per Tab (changes require restart)
+#
+# This setting defines the width of a tab in cells.
+#
+# Some applications, like Emacs, rely on knowing about the width of a tab.
+# To prevent unexpected behavior in these applications, it's also required to
+# change the `it` value in terminfo when altering this setting.
+
+# Font configuration (changes require restart)
+font:
+  # Normal (roman) font face
+  normal:
+    # Font family
+    #
+    # Default:
+    #   - (macOS) Menlo
+    #   - (Linux) monospace
+    #   - (Windows) Consolas
+    family: JetBrainsMono Nerd Font Mono #SauceCodePro Nerd Font Mono
+    # family: MesloLGS NF
+
+    # The `style` can be specified to pick a specific face.
+    #style: Regular
+
+  # Bold font face
+  #bold:
+    #style: Bold
+
+  # Italic font face
+  # italic:
+  #   style: Italic
+
+  # Point size
+  size: 12.0
+
+  # Offset is the extra space around each character. `offset.y` can be thought of
+  # as modifying the line spacing, and `offset.x` as modifying the letter spacing.
+  offset:
+    x: 0
+    y: 0
+
+  # Glyph offset determines the locations of the glyphs within their cells with
+  # the default being at the bottom. Increasing `x` moves the glyph to the right,
+  # increasing `y` moves the glyph upwards.
+  glyph_offset:
+    x: 0
+    y: 0
+
+  # Thin stroke font rendering (macOS only)
+  #
+  # Thin strokes are suitable for retina displays, but for non-retina screens
+  # it is recommended to set `use_thin_strokes` to `false`
+  #
+  # macOS >= 10.14.x:
+  #
+  # If the font quality on non-retina display looks bad then set
+  # `use_thin_strokes` to `true` and enable font smoothing by running the
+  # following command:
+  #   `defaults write -g CGFontRenderingFontSmoothingDisabled -bool NO`
+  #
+  # This is a global setting and will require a log out or restart to take
+  # effect.
+  use_thin_strokes: true
+
+# Display the time it takes to redraw each frame.
+
+# Keep the log file after quitting Alacritty.
+
+# If `true`, bold text is drawn using the bright color variants.
+draw_bold_text_with_bright_colors: true
+
+colors:
+  # COLORSCHEME: base16-gruvbox-dark-medium-256.yml
+  # Default colors
+  primary:
+    background: '0x282828'
+    foreground: '0xd5c4a1'
+
+  # Colors the cursor will use if `custom_cursor_colors` is true
+  normal:
+    black: '0x282828'
+    red: '0xfb4934'
+    green: '0xb8bb26'
+    yellow: '0xfabd2f'
+    blue: '0x83a598'
+    magenta: '0xd3869b'
+    cyan: '0x8ec07c'
+    white: '0xd5c4a1'
+
+  # Bright colors
+  bright:
+    black: '0x665c54'
+    red: '0xfb4934'
+    green: '0xb8bb26'
+    yellow: '0xfabd2f'
+    blue: '0x83a598'
+    magenta: '0xd3869b'
+    cyan: '0x8ec07c'
+    white: '0xfbf1c7'
+
+  cursor:
+    text: '0x282828'
+    cursor: '0xd5c4a1'
+
+  # Normal colors
+  indexed_colors:
+    - {index: 16, color: '0xfe8019'}
+    - {index: 17, color: '0xd65d0e'}
+    - {index: 18, color: '0x3c3836'}
+    - {index: 19, color: '0x504945'}
+    - {index: 20, color: '0xbdae93'}
+    - {index: 21, color: '0xebdbb2'}
+bell:
+  animation: EaseOutExpo
+  duration: 0
+  color: '0xffffff'
+
+# Background opacity
+#
+# Window opacity as a floating point number from `0.0` to `1.0`.
+# The value `0.0` is completely transparent and `1.0` is opaque.
+background_opacity: 1.0
+
+# Mouse bindings
+#
+# Available fields:
+#   - mouse
+#   - action
+#   - mods (optional)
+#
+# Values for `mouse`:
+#   - Middle
+#   - Left
+#   - Right
+#   - Numeric identifier such as `5`
+#
+# All available `mods` and `action` values are documented in the key binding
+# section.
+mouse_bindings:
+  - {mouse: Middle, action: PasteSelection}
+
+mouse:
+  # Click settings
+  #
+  # The `double_click` and `triple_click` settings control the time
+  # alacritty should wait for accepting multiple clicks as one double
+  # or triple click.
+  double_click: {threshold: 300}
+  triple_click: {threshold: 300}
+
+  # If this is `true`, the cursor is temporarily hidden when typing.
+  hide_when_typing: false
+
+  url:
+    # URL launcher
+    #
+    # This program is executed when clicking on a text which is recognized as a URL.
+    # The URL is always added to the command as the last parameter.
+    #
+    # When set to `None`, URL launching will be disabled completely.
+    #
+    # Default:
+    #   - (macOS) open
+    #   - (Linux) xdg-open
+    #   - (Windows) explorer
+    launcher:
+      program: open
+      args: []
+
+    # URL modifiers
+    #
+    # These are the modifiers that need to be held down for opening URLs when clicking
+    # on them. The available modifiers are documented in the key binding section.
+    modifiers: Command
+
+iselection:
+  semantic_escape_chars: ",│`|:\"' ()[]{}<>"
+
+  # When set to `true`, selected text will be copied to the primary clipboard.
+  save_to_clipboard: false
+
+
+cursor:
+  # Cursor style
+  #
+  # Values for `style`:
+  #   - ▇ Block
+  #   - _ Underline
+  #   - | Beam
+  style: Beam
+
+  # If this is `true`, the cursor will be rendered as a hollow box when the
+  # window is not focused.
+  unfocused_hollow: true
+
+# Live config reload (changes require restart)
+live_config_reload: true
+
+# Shell
+#
+# You can set `shell.program` to the path of your favorite shell, e.g. `/bin/fish`.
+# Entries in `shell.args` are passed unmodified as arguments to the shell.
+#
+# Default:
+#   - (Linux/macOS) /bin/bash --login
+#   - (Windows) powershell
+shell:
+  program: /bin/bash
+  args:
+    - --login
+    - -c
+    - /usr/bin/pgrep -vxq tmux > /dev/null 2>&1 && tmux -u new -d -s delete-me &&
+      tmux -u run-shell ~/.tmux/plugins/tmux-resurrect/scripts/restore.sh && tmux
+      kill-session -t delete-me && tmux -u attach || tmux -u attach
+# Windows 10 ConPTY backend (Windows only)
+#
+# This will enable better color support and may resolve other issues,
+# however this API and its implementation is still young and so is
+# disabled by default, as stability may not be as good as the winpty
+# backend.
+#
+# Alacritty will fall back to the WinPTY automatically if the ConPTY
+# backend cannot be initialized.
+# enable_experimental_conpty_backend: false
+
+# Send ESC (\x1b) before characters when alt is pressed.
+alt_send_esc: false
+
+# Key bindings
+#
+# Key bindings are specified as a list of objects. Each binding will specify a
+# key and modifiers required to trigger it, terminal modes where the binding is
+# applicable, and what should be done when the key binding fires. It can either
+# send a byte sequence to the running application (`chars`), execute a
+# predefined action (`action`) or fork and execute a specified command plus
+# arguments (`command`).
+#
+# Bindings are always filled by default, but will be replaced when a new binding
+# with the same triggers is defined. To unset a default binding, it can be
+# mapped to the `None` action.
+#
+# Example:
+#   `- { key: V, mods: Control|Shift, action: Paste }`
+#
+# Available fields:
+#   - key
+#   - mods (optional)
+#   - chars | action | command (exactly one required)
+#   - mode (optional)
+#
+# Values for `key`:
+#   - `A` -> `Z`
+#   - `F1` -> `F12`
+#   - `Key1` -> `Key0`
+#
+#   A full list with available key codes can be found here:
+#   https://docs.rs/glutin/*/glutin/enum.VirtualKeyCode.html#variants
+#
+#   Instead of using the name of the keys, the `key` field also supports using
+#   the scancode of the desired key. Scancodes have to be specified as a
+#   decimal number.
+#   This command will allow you to display the hex scancodes for certain keys:
+#     `showkey --scancodes`
+#
+# Values for `mods`:
+#   - Command
+#   - Control
+#   - Super
+#   - Shift
+#   - Alt
+#
+#   Multiple `mods` can be combined using `|` like this: `mods: Control|Shift`.
+#   Whitespace and capitalization is relevant and must match the example.
+#
+# Values for `chars`:
+#   The `chars` field writes the specified string to the terminal. This makes
+#   it possible to pass escape sequences.
+#   To find escape codes for bindings like `PageUp` ("\x1b[5~"), you can run
+#   the command `showkey -a` outside of tmux.
+#   Note that applications use terminfo to map escape sequences back to
+#   keys. It is therefore required to update the terminfo when
+#   changing an escape sequence.
+#
+# Values for `action`:
+#   - Paste
+#   - PasteSelection
+#   - Copy
+#   - IncreaseFontSize
+#   - DecreaseFontSize
+#   - ResetFontSize
+#   - ScrollPageUp
+#   - ScrollPageDown
+#   - ScrollLineUp
+#   - ScrollLineDown
+#   - ScrollToTop
+#   - ScrollToBottom
+#   - ClearHistory
+#   - Hide
+#   - Quit
+#   - ClearLogNotice
+#   - SpawnNewInstance
+#   - None
+#
+# Values for `command`:
+#   The `command` field must be a map containing a `program` string and
+#   an `args` array of command line parameter strings.
+#
+#   Example:
+#       `command: { program: "alacritty", args: ["-e", "vttest"] }`
+#
+# Values for `mode`:
+#   - ~AppCursor
+#   - AppCursor
+#   - ~AppKeypad
+#   - AppKeypad
+key_bindings:
+  # (Windows/Linux only)
+  #- { key: V,        mods: Control|Shift, action: Paste            }
+  #- { key: C,        mods: Control|Shift, action: Copy             }
+  #- { key: Insert,   mods: Shift,         action: PasteSelection   }
+  #- { key: Key0,     mods: Cotrol,       action: ResetFontSize    }
+  #- { key: Equals,   mods: Control,       action: IncreaseFontSize }
+  #- { key: Add,      mods: Control,       action: IncreaseFontSize }
+  #- { key: Subtract, mods: Control,       action: DecreaseFontSize }
+  #- { key: Minus,    mods: Control,       action: DecreaseFontSize }
+  - {key: PageUp, action: ScrollPageUp}
+  - {key: PageUp, mode: Alt, chars: "\e[5~"}
+  - {key: PageUp, mods: Shift, chars: "\e[5~"}
+  - {key: PageDown, action: ScrollPageDown}
+  - {key: PageDown, mode: Alt, chars: "\e[6~"}
+  - {key: PageDown, mods: Shift, chars: "\e[6~"}
+  - {key: Home, action: ScrollToTop}
+  - {key: Home, mode: Alt, chars: "\eOH"}
+  - {key: Home, mods: Shift, chars: "\e[H"}
+  - {key: End, action: ScrollToBottom}
+  - {key: End, mode: Alt, chars: "\eOF"}
+  - {key: End, mods: Shift, chars: "\e[F"}
+  - {key: Tab, mods: Alt, chars: "\e\t"}
+  - {key: Tab, mods: Alt|Shift, chars: "\e\e[Z"}
+  - {key: Back, chars: "\x7F"}
+  - {key: Back, mods: Alt, chars: "\e\x7F"}
+  - {key: Back, mods: Alt|Shift, chars: "\e\b"}
+  - {key: Space, mods: Control, chars: "\0"}
+  - {key: Space, mods: Alt, chars: ' '}
+  - {key: Left, mods: Alt, chars: "\eb"}
+  - {key: Left, mods: Alt|Shift, chars: "\e\e[D"}
+  - {key: Right, mods: Alt, chars: "\ef"}
+  - {key: Right, mods: Alt|Shift, chars: "\e\e[C"}
+  - {key: Down, mods: Alt, chars: "\e\e[B"}
+  - {key: Down, mods: Alt|Shift, chars: "\e\e[B"}
+  - {key: Up, mods: Alt, chars: "\e\e[A"}
+  - {key: Up, mods: Alt|Shift, chars: "\e\e[A"}
+  - {key: A, mods: Alt, chars: "\ea"}
+  - {key: A, mods: Alt|Shift, chars: "\eA"}
+  - {key: B, mods: Alt, chars: "\eb"}
+  - {key: B, mods: Alt|Shift, chars: "\eB"}
+  - {key: C, mods: Alt, chars: "\ec"}
+  - {key: C, mods: Alt|Shift, chars: "\eC"}
+  - {key: D, mods: Alt, chars: "\ed"}
+  - {key: D, mods: Alt|Shift, chars: "\eD"}
+  - {key: E, mods: Alt, chars: "\ee"}
+  - {key: E, mods: Alt|Shift, chars: "\eE"}
+  - {key: F, mods: Alt, chars: "\ef"}
+  - {key: F, mods: Alt|Shift, chars: "\eF"}
+  - {key: G, mods: Alt, chars: "\eg"}
+  - {key: G, mods: Alt|Shift, chars: "\eG"}
+  - {key: H, mods: Alt, chars: "\eh"}
+  - {key: H, mods: Alt|Shift, chars: "\eH"}
+  - {key: I, mods: Alt, chars: "\ei"}
+  - {key: I, mods: Alt|Shift, chars: "\eI"}
+  - {key: J, mods: Alt, chars: "\ej"}
+  - {key: J, mods: Alt|Shift, chars: "\eJ"}
+  - {key: K, mods: Alt, chars: "\ek"}
+  - {key: K, mods: Alt|Shift, chars: "\eK"}
+  - {key: L, mods: Alt, chars: "\el"}
+  - {key: L, mods: Alt|Shift, chars: "\eL"}
+  - {key: M, mods: Alt, chars: "\em"}
+  - {key: M, mods: Alt|Shift, chars: "\eM"}
+  - {key: N, mods: Alt, chars: "\en"}
+  - {key: N, mods: Alt|Shift, chars: "\eN"}
+  - {key: O, mods: Alt, chars: "\eo"}
+  - {key: O, mods: Alt|Shift, chars: "\eO"}
+  - {key: P, mods: Alt, chars: "\ep"}
+  - {key: P, mods: Alt|Shift, chars: "\eP"}
+  - {key: Q, mods: Alt, chars: "\eq"}
+  - {key: Q, mods: Alt|Shift, chars: "\eQ"}
+  - {key: R, mods: Alt, chars: "\er"}
+  - {key: R, mods: Alt|Shift, chars: "\eR"}
+  - {key: S, mods: Alt, chars: "\es"}
+  - {key: S, mods: Alt|Shift, chars: "\eS"}
+  - {key: T, mods: Alt, chars: "\et"}
+  - {key: T, mods: Alt|Shift, chars: "\eT"}
+  - {key: U, mods: Alt, chars: "\eu"}
+  - {key: U, mods: Alt|Shift, chars: "\eU"}
+  - {key: V, mods: Alt, chars: "\ev"}
+  - {key: V, mods: Alt|Shift, chars: "\eV"}
+  - {key: W, mods: Alt, chars: "\ew"}
+  - {key: W, mods: Alt|Shift, chars: "\eW"}
+  - {key: X, mods: Alt, chars: "\ex"}
+  - {key: X, mods: Alt|Shift, chars: "\eX"}
+  - {key: Y, mods: Alt, chars: "\ey"}
+  - {key: Y, mods: Alt|Shift, chars: "\eY"}
+  - {key: Z, mods: Alt, chars: "\ez"}
+  - {key: Z, mods: Alt|Shift, chars: "\eZ"}
+  - {key: Key1, mods: Alt, chars: "\e1"}
+  - {key: Key1, mods: Alt|Shift, chars: "\e!"}
+  - {key: Key2, mods: Alt, chars: "\e2"}
+  - {key: Key2, mods: Alt|Shift, chars: "\e#"}
+  - {key: Key3, mods: Alt, chars: "\e3"}
+  - {key: Key3, mods: Alt|Shift, chars: "\e#"}
+  - {key: Key4, mods: Alt, chars: "\e4"}
+  - {key: Key4, mods: Alt|Shift, chars: "\e$"}
+  - {key: Key5, mods: Alt, chars: "\e5"}
+  - {key: Key5, mods: Alt|Shift, chars: "\e%"}
+  - {key: Key6, mods: Alt, chars: "\e6"}
+  - {key: Key6, mods: Alt|Shift, chars: "\e^"}
+  - {key: Key7, mods: Alt, chars: "\e7"}
+  - {key: Key7, mods: Alt|Shift, chars: "\e&"}
+  - {key: Key8, mods: Alt, chars: "\e8"}
+  - {key: Key8, mods: Alt|Shift, chars: "\e*"}
+  - {key: Key9, mods: Alt, chars: "\e9"}
+  - {key: Key9, mods: Alt|Shift, chars: "\e("}
+  - {key: Key0, mods: Alt, chars: "\e0"}
+  - {key: Key0, mods: Alt|Shift, chars: "\e)"}
+  - {key: Minus, mods: Alt, chars: "\e-"}
+  - {key: Minus, mods: Alt|Shift, chars: "\e_"}
+  - {key: Equals, mods: Alt, chars: "\e="}
+  - {key: Equals, mods: Alt|Shift, chars: "\e+"}
+  - {key: LBracket, mods: Alt, chars: "\e["}
+  - {key: LBracket, mods: Alt|Shift, chars: "\e{"}
+  - {key: RBracket, mods: Alt, chars: "\e]"}
+  - {key: RBracket, mods: Alt|Shift, chars: "\e}"}
+  - {key: Backslash, mods: Alt, chars: "\e\\"}
+  - {key: Backslash, mods: Alt|Shift, chars: "\e|"}
+  - {key: Semicolon, mods: Alt, chars: "\e;"}
+  - {key: Semicolon, mods: Alt|Shift, chars: "\e:"}
+  - {key: Apostrophe, mods: Alt, chars: "\e'"}
+  - {key: Apostrophe, mods: Alt|Shift, chars: "\e\""}
+  - {key: Comma, mods: Alt, chars: "\e,"}
+  - {key: Comma, mods: Alt|Shift, chars: "\e<"}
+  - {key: Period, mods: Alt, chars: "\e."}
+  - {key: Period, mods: Alt|Shift, chars: "\e>"}
+  - {key: Slash, mods: Alt, chars: "\e/"}
+  - {key: Slash, mods: Alt|Shift, chars: "\e?"}
+  - {key: Grave, mods: Alt, chars: "\e`"}
+  - {key: Grave, mods: Alt|Shift, chars: "\e~"}
+  - {key: N, mods: Command, command: {program: osascript, args: [-e, tell application
+            id "com.runningwithcrayons.Alfred" to run trigger "spawnWithTitle" in
+            workflow "de.kvndrsslr.alacritter" with argument ""]}}

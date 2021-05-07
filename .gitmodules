@@ -1,0 +1,12 @@
+[submodule "Library/Application Support/Übersicht/widgets/simple-bar"]
+	path = Library/Application Support/Übersicht/widgets/simple-bar
+	url = https://github.com/kvndrsslr/simple-bar.git
+[submodule ".hammerspoon/stackline"]
+	path = .hammerspoon/stackline
+	url = https://github.com/kvndrsslr/stackline.git
+[submodule "Projects/Code"]
+	path = Projects/Code
+	url = https://github.com/kvndrsslr/code-aggregate.git
+[submodule "/Users/kvn/.tmux/plugins/tpm"]
+	path = /Users/kvn/.tmux/plugins/tpm
+	url = https://github.com/tmux-plugins/tpm

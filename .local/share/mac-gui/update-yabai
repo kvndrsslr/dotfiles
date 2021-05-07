@@ -1,0 +1,7 @@
+#!/bin/bash
+echo "kvn             ALL = (root) NOPASSWD: /usr/local/bin/yabai" | pbcopy
+sudo /usr/sbin/visudo
+brew services stop yabai
+sudo yabai --uninstall-sa
+sudo yabai --install-sa
+brew services start yabai

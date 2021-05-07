@@ -1,0 +1,4 @@
+ENTRY "Home" URL "/Users/kvn"
+ENTRY "DT Inbox" URL "/Users/kvn/Library/Application Support/DEVONthink 3/Inbox"
+GROUP "Coding Projects"
+ENDGROUP

@@ -1,0 +1,24 @@
+:: default
+:: yabai @
+hyper - 1 ; yabai
+yabai < hyper - 1 ; default
+
+cmd + shift - m : skhd -k "cmd + shift + ctrl + alt - m"
+
+ctrl + cmd - c  : yabai -m window --display next || yabai -m window --display first; yabai -m display --focus next || yabai -m display --focus first 
+cmd + ctrl + shift - h : yabai -m window --stack west
+cmd + ctrl + shift - j : yabai -m window --stack south 
+cmd + ctrl + shift - k : yabai -m window --stack north 
+cmd + ctrl + shift - l : yabai -m window --stack east
+cmd + ctrl - tab : yabai -m window --focus stack.next || yabai -m window --focus stack.first
+cmd + ctrl + shift - tab : yabai -m window --focus stack.prev || yabai -m window --focus stack.last
+# cmd + ctrl - tab : yabai -m query --spaces --space \
+#  | jq -re ".index" \
+#  | xargs -I{} yabai -m query --windows --space {} \
+#  | jq -sre "add | map(select(.minimized != 1)) | sort_by(.display, .frame.y, .frame.x, .id) | reverse | nth(index(map(select(.focused == 1))) - 1).id" \
+#  | xargs -I{} yabai -m window --focus {}
+# cmd + ctrl + shift - tab : yabai -m query --spaces --space \
+#  | jq -re ".index" \
+#  | xargs -I{} yabai -m query --windows --space {} \
+#  | jq -sre "add | map(select(.minimized != 1)) | sort_by(.display, .frame.y, .frame.y, .id) | nth(index(map(select(.focused == 1))) - 1).id" \
+#  | xargs -I{} yabai -m window --focus {}

@@ -1,0 +1,20 @@
+#!/usr/bin/env zsh
+
+prefix="/Users/kvn/Pictures/bg${1}"
+displays=`yabai -m query --displays | jq ".[].index"`
+for display in "${(f)displays}"; do
+  id=`yabai -m query --displays | jq ".[] | select(.index == ${display}) | .id"`
+  spaces=`yabai -m query --spaces | jq ".[] | select(.display == ${display}) | .index"`
+  visible=`yabai -m query --spaces | jq ".[] | select(.display == ${display}) | select(.visible == 1) | .index"`
+  width=`yabai -m query --displays | jq ".[] | select(.index == ${display}) | .frame.w"`
+  if [[ $width -gt 1920 ]]; then
+    pic="${prefix}-retina.png"
+  else
+    pic="${prefix}.png"
+  fi
+  for space in "${(f)spaces}"; do
+    yabai -m space --focus $space
+    osascript -e 'tell application "System Events" to set picture of (first desktop whose id is "'"${id}"'") to  "'"${pic}"'"'
+  done
+  yabai -m space --focus $visible
+done
