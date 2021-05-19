@@ -23,10 +23,10 @@ zstyle ':z4h:autosuggestions' forward-char     'accept'
 
 # Send these files over to the remote host when connecting over ssh.
 # Multiple files can be listed here.
-# zstyle ':z4h:ssh:*'           send-extra-files '~/.iterm2_shell_integration.zsh'
+zstyle ':z4h:ssh:*'           send-extra-files '~/.tmux.conf'
 # Disable automatic teleportation of z4h over ssh when connecting to some-host.
 # This makes `ssh some-host` equivalent to `command ssh some-host`.
-zstyle ':z4h:ssh:some-host'   passthrough      'yes'
+# zstyle ':z4h:ssh:some-host'   passthrough      'yes'
 
 # Move the cursor to the end when Up/Down fetches a command from history?
 zstyle ':zle:up-line-or-beginning-search'   leave-cursor 'yes'
@@ -45,14 +45,25 @@ zstyle ':zle:down-line-or-beginning-search' leave-cursor 'yes'
 # perform network I/O must be done above. Everything else is best done below.
 z4h init || return
 
-# Export environment variables.
-export GPG_TTY=$TTY
-eval "$(perl -I$HOME/.local/share/perl5/lib/perl5 -Mlocal::lib=$HOME/.local/share/perl5)"
-
 # Extend PATH.
-path=(~/bin $path)
-path=(/usr/local/opt/coreutils/libexec/gnubin $path)
+path=($HOME/bin $HOME/.local/bin $path)
+if [[ -d /usr/local/opt/coreutils/libexec/gnubin ]]; then
+  path=(/usr/local/opt/coreutils/libexec/gnubin $path)
+fi
 
+# Export environment variables.
+ZLE_RPROMPT_INDENT=0
+export GPG_TTY=$TTY
+export LANGUAGE=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export LC_CTYPE=UTF-8
+if [[ -d $HOME/.local/share/perl5/lib/perl5 ]]; then
+  eval "$(perl -I$HOME/.local/share/perl5/lib/perl5 -Mlocal::lib=$HOME/.local/share/perl5)"
+fi
+if [[ -f $HOME/.local/share/global-lightswitch/.dircolors.base16.dark ]]; then
+  eval "$(dircolors $HOME/.local/share/global-lightswitch/.dircolors.base16.dark)"
+fi
 # Use additional Git repositories pulled in with `z4h install`.
 #
 # This is just an example that you should delete. It does nothing useful.
@@ -99,6 +110,32 @@ function rr () {
       --height=50% --layout=reverse --delimiter : --preview 'bat --style=numbers --color=always --line-range :5000 -H {2} {1}' --preview-window '+{2}+3/2'
 }
 
+function colors () {
+  for i in {0..21} ; do
+    printf "\x1b[48;5;%sm%3d\e[0m " "$i" "$i"
+    if (( i % 7 == 0 )); then
+        printf "\n";
+    fi
+  done
+}
+
+function tmux () {
+  if [[ ! -d ~/.tmux/plugins/tpm ]]; then 
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    TMUX_PLUGIN_MANAGER_PATH=$HOME/.tmux/plugins/tpm/ ~/.tmux/plugins/tpm/scripts/install_plugins.sh
+  fi
+  command tmux "$@" 
+}
+
+function yeet () {
+  (nohup yeet "$@" &>/dev/null &)
+}
+
+function weather () {
+  locations='Leipzig,Paderborn,Hannover,Aachen,Silves,Peking,Reykjavik,San Francisco'
+  curl -s 'wttr.in/{'"$locations"'}?format=3' | fzf --height=20% --layout=reverse | sed -r -e 's/^(.*):.*/\1/' | cat <(echo -n "wttr.in/") - | xargs curl -0
+}
+
 # Replace `ssh` with `z4h ssh` to automatically teleport z4h to remote hosts.
 # function ssh() { z4h ssh "$@" }
 
@@ -106,19 +143,22 @@ function rr () {
 [[ -n $z4h_win_home ]] && hash -d w=$z4h_win_home
 
 # Define aliases.
-alias tree='tree -a -I .git'
-alias bi='brew install '
-alias bic='brew install --cask --no-quarantine '
-alias mc='mc -x'
-alias sed='gsed'
+if [[ $OSTYPE == darwin* ]]; then
+  alias bi='brew install '
+  alias bic='brew install --cask --no-quarantine '
+  alias sed='gsed'
+  alias grep='ggrep'
+fi
 
+alias tree='tree -a -I .git'
+alias mc='mc -x'
 # Add flags to existing aliases.
-alias ls="${aliases[ls]:-ls} -Alh --color=auto"
+alias ls="${aliases[ls]:-ls} -Alh --color=auto --hyperlink=auto"
 
 # Set shell options: http://zsh.sourceforge.net/Doc/Release/Options.html.
 setopt glob_dots     # no special treatment for file names with a leading dot
 setopt no_auto_menu  # require an extra TAB press to open the completion menu
 
-if ps $PPID |grep mc; then
+if ps $PPID | grep mc; then
   typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=()
 fi

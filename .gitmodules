@@ -10,3 +10,6 @@
 [submodule "/Users/kvn/.tmux/plugins/tpm"]
 	path = /Users/kvn/.tmux/plugins/tpm
 	url = https://github.com/tmux-plugins/tpm
+[submodule "/Users/kvn/.config/qmk"]
+	path = /Users/kvn/.config/qmk
+	url = https://github.com/kvndrsslr/qmk_firmware

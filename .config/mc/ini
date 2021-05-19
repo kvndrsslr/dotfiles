@@ -105,7 +105,7 @@ menubar_visible=true
 free_space=true
 horizontal_split=false
 vertical_equal=true
-left_panel_size=68
+left_panel_size=76
 horizontal_equal=true
 top_panel_size=28
 
@@ -130,6 +130,10 @@ base_color=
 xterm-256color=
 
 rxvt=
+
+xterm-16color=
+
+xterm-kitty=
 
 [Panels]
 show_mini_info=true

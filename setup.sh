@@ -17,8 +17,27 @@ sudo yabai --install-sa
 # 6. start services
 brew services start yabai
 # 6. macOS defaults
-
-
+defaults write NSGlobalDomain "AppleShowAllExtensions" -bool "true"
+defaults write com.apple.Finder "AppleShowAllFiles" -bool "true"
+defaults write com.apple.finder "QuitMenuItem" -bool "true"
+defaults write com.apple.finder "FXEnableExtensionChangeWarning" -bool "false"
+defaults write NSGlobalDomain "NSToolbarTitleViewRolloverDelay" -float "0"
+defaults write NSGlobalDomain "NSTableViewDefaultSizeMode" -int "1"
+defaults write com.apple.dock "mru-spaces" -bool "false"
+defaults write com.apple.appleseed.FeedbackAssistant "Autogather" -bool "false"
+defaults write com.apple.TimeMachine "DoNotOfferNewDisksForBackup" -bool "true"
+defaults write com.apple.helpviewer "DevMode" -bool "true"
+defaults write com.apple.screencapture "show-thumbnail" -bool "false"
+defaults write com.apple.screencapture "location" -string "~/Pictures"
+defaults write com.apple.screencapture "disable-shadow" -bool "true"
+defaults write com.apple.dock "orientation" -string "left"
+defaults write com.apple.dock "tilesize" -int "36"
+defaults write com.apple.dock "autohide" -bool "true"
+defaults write com.apple.dock autohide-delay -float 0
+defaults write com.apple.dock autohide-timing-fuction -float 0.2
+killall Finder
+killall Dock
+sudo yabai --load-sa
 
 # perl init 
 PERL_MM_OPT="INSTALL_BASE=$HOME/.local/share/perl5" cpan local::lib
@@ -54,6 +73,9 @@ asdf global scala 2.13.5
 asdf plugin add sbt
 asdf install sbt 1.5.1
 asdf global sbt 1.5.1
+asdf plugin add nodejs
+asdf install nodejs lts-erbium
+asdf global nodejs lts-erbium
 # python tools
 pip3 install yeecli
 

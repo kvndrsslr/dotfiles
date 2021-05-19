@@ -1,24 +1,67 @@
-:: default
-:: yabai @
-hyper - 1 ; yabai
-yabai < hyper - 1 ; default
+:: default : /Users/kvn/bin/skhd_mode ""
+:: wmov @ : /Users/kvn/bin/skhd_mode "wmov"
+:: dmov @ : /Users/kvn/bin/skhd_mode "dmov"
+
+default, wmov < hyper - m ; dmov
+dmov < 1 : cur_window=$(yabai -m query --windows --window | jq '.id') && yabai -m window --display 2 && yabai -m window --focus ${cur_window}
+dmov < 2 : cur_window=$(yabai -m query --windows --window | jq '.id') && yabai -m window --display 1 && yabai -m window --focus ${cur_window}
+dmov < 3 : cur_window=$(yabai -m query --windows --window | jq '.id') && yabai -m window --display 3 && yabai -m window --focus ${cur_window}
+dmov < shift - 1 : yabai -m window --display 2
+dmov < shift - 2 : yabai -m window --display 1
+dmov < shift - 3 : yabai -m window --display 3
+dmov < hyper - m ; default
+dmov < escape ; default
+
+
+
+default, dmov < hyper - w ; wmov 
+wmov < hyper - w ; default
+wmov < v : yabai -m window --move abs:0:0 && yabai -m window --resize abs:2560:1440
+wmov < a : yabai -m window --layer above
+wmov < b : yabai -m window --layer below
+wmov < n : yabai -m window --layer normal
+wmov < 
 
 cmd + shift - m : skhd -k "cmd + shift + ctrl + alt - m"
 
-ctrl + cmd - c  : yabai -m window --display next || yabai -m window --display first; yabai -m display --focus next || yabai -m display --focus first 
+ctrl + cmd - c  : cur_window=$(yabai -m query --windows --window | jq '.id') && \
+                  yabai -m window --display next  || yabai -m window --display first && \
+                  yabai -m window --focus ${cur_window}
 cmd + ctrl + shift - h : yabai -m window --stack west
 cmd + ctrl + shift - j : yabai -m window --stack south 
 cmd + ctrl + shift - k : yabai -m window --stack north 
 cmd + ctrl + shift - l : yabai -m window --stack east
-cmd + ctrl - tab : yabai -m window --focus stack.next || yabai -m window --focus stack.first
-cmd + ctrl + shift - tab : yabai -m window --focus stack.prev || yabai -m window --focus stack.last
-# cmd + ctrl - tab : yabai -m query --spaces --space \
-#  | jq -re ".index" \
-#  | xargs -I{} yabai -m query --windows --space {} \
-#  | jq -sre "add | map(select(.minimized != 1)) | sort_by(.display, .frame.y, .frame.x, .id) | reverse | nth(index(map(select(.focused == 1))) - 1).id" \
-#  | xargs -I{} yabai -m window --focus {}
-# cmd + ctrl + shift - tab : yabai -m query --spaces --space \
-#  | jq -re ".index" \
-#  | xargs -I{} yabai -m query --windows --space {} \
-#  | jq -sre "add | map(select(.minimized != 1)) | sort_by(.display, .frame.y, .frame.y, .id) | nth(index(map(select(.focused == 1))) - 1).id" \
-#  | xargs -I{} yabai -m window --focus {}
+# cmd + ctrl - tab : yabai -m window --focus stack.next || yabai -m window --focus stack.first
+# cmd + ctrl + shift - tab : yabai -m window --focus stack.prev || yabai -m window --focus stack.last
+
+
+hyper - tab : yabai -m query --spaces --space \
+  | jq -re ".index" \
+  | xargs -I{} yabai -m query --windows --space {} \
+  | jq -sre "add | map(select(.minimized != 1)) | sort_by(.display, .frame.y, .frame.x, .id) | reverse | nth(index(map(select(.focused == 1))) - 1).id" \
+  | xargs -I{} yabai -m window --focus {}
+
+
+hyper - l : yabai -m query --displays --display \
+  | jq -re ".index" \
+  | xargs -I{} yabai -m query --spaces --display {} \
+  | jq -sre "add | sort_by(.id) | reverse | nth(index(map(select(.focused == 1))) - 1).index" \
+  | xargs -I{} yabai -m space --focus {} && (\
+    yabai -m query --windows --space \
+    | jq -er 'map(select(.focused == 1)) | length > 0' || \
+	  yabai -m window --focus mouse\
+  )
+  
+hyper - h : yabai -m query --displays --display \
+  | jq -re ".index" \
+  | xargs -I{} yabai -m query --spaces --display {} \
+  | jq -sre "add | sort_by(.id) | nth(index(map(select(.focused == 1))) - 1).index" \
+  | xargs -I{} yabai -m space --focus {} && (\
+    yabai -m query --windows --space \
+    | jq -er 'map(select(.focused == 1)) | length > 0' || \
+	  yabai -m window --focus mouse\
+  )
+
+hyper - 1 : yabai -m display --focus 2;
+hyper - 2 : yabai -m display --focus 1;
+hyper - 3 : yabai -m display --focus 3;
