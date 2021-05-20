@@ -1,6 +1,12 @@
 :: default : /Users/kvn/bin/skhd_mode ""
 :: wmov @ : /Users/kvn/bin/skhd_mode "wmov"
 :: dmov @ : /Users/kvn/bin/skhd_mode "dmov"
+:: passthrough : /Users/kvn/bin/skhd_mode "passthrough"
+
+hyper - space; passthrough
+passthrough < hyper - space; default
+
+default < a : skhd -k "cmd - space"
 
 default, wmov < hyper - m ; dmov
 dmov < 1 : cur_window=$(yabai -m query --windows --window | jq '.id') && yabai -m window --display 2 && yabai -m window --focus ${cur_window}

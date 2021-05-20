@@ -23,7 +23,7 @@ zstyle ':z4h:autosuggestions' forward-char     'accept'
 
 # Send these files over to the remote host when connecting over ssh.
 # Multiple files can be listed here.
-zstyle ':z4h:ssh:*'           send-extra-files '~/.tmux.conf'
+zstyle ':z4h:ssh:*'           send-extra-files '~/.tmux.conf' '~/.profile' '~/.hushlogin'
 # Disable automatic teleportation of z4h over ssh when connecting to some-host.
 # This makes `ssh some-host` equivalent to `command ssh some-host`.
 # zstyle ':z4h:ssh:some-host'   passthrough      'yes'
@@ -49,6 +49,12 @@ z4h init || return
 path=($HOME/bin $HOME/.local/bin $path)
 if [[ -d /usr/local/opt/coreutils/libexec/gnubin ]]; then
   path=(/usr/local/opt/coreutils/libexec/gnubin $path)
+fi
+if [[ -d $HOME/.linuxbrew ]]; then
+  eval "$($HOME/.linuxbrew/bin/brew shellenv)"
+  if [[ -d $HOME/.linuxbrew/opt/coreutils/libexec/gnubin ]]; then
+    path=($HOME/.linuxbrew/opt/coreutils/libexec/gnubin $path)
+  fi
 fi
 
 # Export environment variables.
@@ -110,6 +116,11 @@ function rr () {
       --height=50% --layout=reverse --delimiter : --preview 'bat --style=numbers --color=always --line-range :5000 -H {2} {1}' --preview-window '+{2}+3/2'
 }
 
+function mssh () {
+  kitty +kitten ssh "$1" 'echo "kitty terminfo deployed"' 
+  z4h ssh "$@"
+}
+
 function colors () {
   for i in {0..21} ; do
     printf "\x1b[48;5;%sm%3d\e[0m " "$i" "$i"
@@ -122,7 +133,6 @@ function colors () {
 function tmux () {
   if [[ ! -d ~/.tmux/plugins/tpm ]]; then 
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-    TMUX_PLUGIN_MANAGER_PATH=$HOME/.tmux/plugins/tpm/ ~/.tmux/plugins/tpm/scripts/install_plugins.sh
   fi
   command tmux "$@" 
 }
@@ -134,6 +144,16 @@ function yeet () {
 function weather () {
   locations='Leipzig,Paderborn,Hannover,Aachen,Silves,Peking,Reykjavik,San Francisco'
   curl -s 'wttr.in/{'"$locations"'}?format=3' | fzf --height=20% --layout=reverse | sed -r -e 's/^(.*):.*/\1/' | cat <(echo -n "wttr.in/") - | xargs curl -0
+}
+
+function brewit () {
+  brew update
+  brew outdated
+  echo "Continue? (y/n)"
+  read -sk tmp
+  if [[ "$tmp" == "y" ]]; then
+    brew upgrade --greedy --casks --no-quarantine && brew upgrade --formulae
+  fi
 }
 
 # Replace `ssh` with `z4h ssh` to automatically teleport z4h to remote hosts.
@@ -150,10 +170,13 @@ if [[ $OSTYPE == darwin* ]]; then
   alias grep='ggrep'
 fi
 
+alias ls='ls -Alh --color=auto'
 alias tree='tree -a -I .git'
 alias mc='mc -x'
 # Add flags to existing aliases.
-alias ls="${aliases[ls]:-ls} -Alh --color=auto --hyperlink=auto"
+if command ls --hyperlink=auto /dev/null &> /dev/null; then
+  alias ls="${aliases[ls]:-ls} --hyperlink=auto"
+fi
 
 # Set shell options: http://zsh.sourceforge.net/Doc/Release/Options.html.
 setopt glob_dots     # no special treatment for file names with a leading dot
