@@ -64,8 +64,9 @@ export LANGUAGE=en_US.UTF-8
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export LC_CTYPE=UTF-8
+export XDG_CONFIG_HOME=$HOME/.config
 if [[ -d $HOME/.local/share/perl5/lib/perl5 ]]; then
-  eval "$(perl -I$HOME/.local/share/perl5/lib/perl5 -Mlocal::lib=$HOME/.local/share/perl5)"
+  eval "$(perl -I$HOME/.local/share/perl5/lib/perl5 -Mlocal::lib=$HOME/.local/share/perl5)" &>/dev/null
 fi
 if [[ -f $HOME/.local/share/global-lightswitch/.dircolors.base16.dark ]]; then
   eval "$(dircolors $HOME/.local/share/global-lightswitch/.dircolors.base16.dark)"
@@ -185,3 +186,9 @@ setopt no_auto_menu  # require an extra TAB press to open the completion menu
 if ps $PPID | grep mc; then
   typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=()
 fi
+
+# Base16 Shell
+BASE16_SHELL="$HOME/.config/base16-shell/"
+[ -n "$PS1" ] && \
+    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
+        eval "$("$BASE16_SHELL/profile_helper.sh")"

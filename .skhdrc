@@ -7,6 +7,7 @@ hyper - space; passthrough
 passthrough < hyper - space; default
 
 default < a : skhd -k "cmd - space"
+default < k : kitty -d "$HOME" --single-instance 
 
 default, wmov < hyper - m ; dmov
 dmov < 1 : cur_window=$(yabai -m query --windows --window | jq '.id') && yabai -m window --display 2 && yabai -m window --focus ${cur_window}
@@ -26,9 +27,6 @@ wmov < v : yabai -m window --move abs:0:0 && yabai -m window --resize abs:2560:1
 wmov < a : yabai -m window --layer above
 wmov < b : yabai -m window --layer below
 wmov < n : yabai -m window --layer normal
-wmov < 
-
-cmd + shift - m : skhd -k "cmd + shift + ctrl + alt - m"
 
 ctrl + cmd - c  : cur_window=$(yabai -m query --windows --window | jq '.id') && \
                   yabai -m window --display next  || yabai -m window --display first && \

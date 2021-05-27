@@ -1,0 +1,32 @@
+# ~/.ticker.yaml
+show-summary: true
+show-tags: true
+show-fundamentals: true
+show-separator: true
+show-holdings: true
+interval: 5
+sort: user
+currency: USD
+watchlist:
+  - GME
+  - AMC
+  - SLGG
+  - DOGE-USD
+  - BTC-USD
+lots:
+  - symbol: "GME"
+    quantity: 77.0
+    unit_cost: 197.5
+  - symbol: "AMC"
+    quantity: 15.0
+    unit_cost: 16.82
+  - symbol: "SLGG"
+    quantity: 50.0
+    unit_cost: 4.605
+colors:
+  text: "#fbf1c7"
+  text-light: "#a89984"
+  text-label: "#d5c4a1"
+  text-line: "#504945"
+  text-tag: "#b8bb26"
+  background-tag: "#3c3836"

@@ -49,7 +49,6 @@ yabai -m rule --add app="^mpv$" manage=off opacity=1.0 border=off sticky=on laye
 us="osascript -e 'tell application id \"tracesof.Uebersicht\" to refresh widget id (\"simple-bar-spaces-jsx\")'"
 up="osascript -e 'tell application id \"tracesof.Uebersicht\" to refresh widget id (\"simple-bar-process-jsx\")'"
 
-usb="osascript /Users/kvn/bin/updateSimpleBar.scpt"
 yabai -m signal --add event=space_changed action="${us}"
 yabai -m signal --add event=display_changed action="${us}"
 yabai -m signal --add event=window_focused action="${us}"

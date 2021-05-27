@@ -1,0 +1,35 @@
+mpd_music_dir = ~/Music/Library/
+header_visibility = no
+titles_visibility = no
+statusbar_visibility = no
+display_bitrate = yes
+main_window_color = 8
+message_delay_time = 1
+playlist_disable_highlight_delay = 1
+
+now_playing_prefix = $b$r
+now_playing_suffix = $/r$/b
+current_item_prefix = $r
+current_item_suffix = $/r
+
+playlist_display_mode = "classic" (classic/columns)
+song_window_title_format = "{%t} -- {%a} {"%b" (%y)}"
+song_list_format = "$8 %t $R$7 %a   $6 %l "
+song_columns_list_format = "(2f)[5]{} (4f)[5]{n} (2f)[8]{} (25)[8]{t} (2f)[7]{} (20)[7]{a} (25)[7]{b} (6f)[7]{y} (7f)[5]{lr} (1f)[5]{}"
+
+progressbar_look = "─╼"
+progressbar_color = 21
+progressbar_elapsed_color = 3
+visualizer_data_source = localhost:5555
+visualizer_output_name = Visualizer feed
+visualizer_in_stereo = yes
+visualizer_look = ●▮
+visualizer_color = 18,5,5,6,6,3,3,3
+#visualizer_color = 3
+visualizer_fps = 60
+visualizer_spectrum_smooth_look = no
+visualizer_type = ellipse
+visualizer_spectrum_hz_min = 30
+visualizer_spectrum_hz_max = 20000
+visualizer_spectrum_dft_size = 5
+visualizer_autoscale = yes
