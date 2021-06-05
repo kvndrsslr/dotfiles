@@ -4,9 +4,9 @@ show-tags: true
 show-fundamentals: true
 show-separator: true
 show-holdings: true
-interval: 5
+interval: 1
 sort: user
-currency: USD
+currency: EUR
 watchlist:
   - GME
   - AMC
@@ -14,15 +14,12 @@ watchlist:
   - DOGE-USD
   - BTC-USD
 lots:
-  - symbol: "GME"
-    quantity: 77.0
-    unit_cost: 197.5
   - symbol: "AMC"
-    quantity: 15.0
-    unit_cost: 16.82
-  - symbol: "SLGG"
-    quantity: 50.0
-    unit_cost: 4.605
+    quantity: 540.0
+    unit_cost: 54.739896
+  - symbol: "GME"
+    quantity: 0.0
+    unit_cost: 257.09768
 colors:
   text: "#fbf1c7"
   text-light: "#a89984"

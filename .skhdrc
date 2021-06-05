@@ -7,7 +7,7 @@ hyper - space; passthrough
 passthrough < hyper - space; default
 
 default < a : skhd -k "cmd - space"
-default < k : kitty -d "$HOME" --single-instance 
+default < k : kitty -d "$HOME" --single-instance --listen-on unix:/tmp/mykitty
 
 default, wmov < hyper - m ; dmov
 dmov < 1 : cur_window=$(yabai -m query --windows --window | jq '.id') && yabai -m window --display 2 && yabai -m window --focus ${cur_window}

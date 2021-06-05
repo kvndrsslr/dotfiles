@@ -2,35 +2,41 @@
 # shell customization and configuration (including exported environment
 # variables such as PATH) in this file or in files source by it.
 #
-# Documentation: https://github.com/romkatv/zsh4humans/blob/v4/README.md.
+# Documentation: https://github.com/romkatv/zsh4humans/blob/v5/README.md.
 
 # Periodic auto-update on Zsh startup: 'ask' or 'no'.
-zstyle ':z4h:'                auto-update      'ask'
+# You can manually run `z4h update` to update everything.
+zstyle ':z4h:' auto-update      'no'
 # Ask whether to auto-update this often; has no effect if auto-update is 'no'.
-zstyle ':z4h:'                auto-update-days '28'
+zstyle ':z4h:' auto-update-days '28'
+
+# Automaticaly wrap TTY with a transparent tmux ('integrated'), or start a
+# full-fledged tmux ('system'), or disable features that require tmux ('no').
+zstyle ':z4h:' start-tmux       'no'
+# Move prompt to the bottom when zsh starts up so that it's always in the
+# same position. Has no effect if start-tmux is 'no'.
+zstyle ':z4h:' prompt-at-bottom 'yes'
 
 # Keyboard type: 'mac' or 'pc'.
-zstyle ':z4h:bindkey'         keyboard         'mac'
-# When fzf menu opens on TAB, another TAB moves the cursor down ('tab:down')
-# or accepts the selection and triggers another TAB-completion ('tab:repeat')?
-zstyle ':z4h:fzf-complete'    fzf-bindings     'tab:down'
-# When fzf menu opens on Shift+Down, TAB moves the cursor down ('tab:down')
-# or accepts the selection and triggers another Shift+Down ('tab:repeat')?
-zstyle ':z4h:cd-down'         fzf-bindings     'tab:down'
+zstyle ':z4h:bindkey' keyboard  'mac'
+
 # Right-arrow key accepts one character ('partial-accept') from
 # command autosuggestions or the whole thing ('accept')?
-zstyle ':z4h:autosuggestions' forward-char     'accept'
+zstyle ':z4h:autosuggestions' forward-char 'accept'
 
-# Send these files over to the remote host when connecting over ssh.
-# Multiple files can be listed here.
-zstyle ':z4h:ssh:*'           send-extra-files '~/.tmux.conf' '~/.profile' '~/.hushlogin'
-# Disable automatic teleportation of z4h over ssh when connecting to some-host.
-# This makes `ssh some-host` equivalent to `command ssh some-host`.
-# zstyle ':z4h:ssh:some-host'   passthrough      'yes'
+# Recursively traverse directories when TAB-completing files.
+zstyle ':z4h:fzf-complete' recurse-dirs 'yes'
 
-# Move the cursor to the end when Up/Down fetches a command from history?
-zstyle ':zle:up-line-or-beginning-search'   leave-cursor 'yes'
-zstyle ':zle:down-line-or-beginning-search' leave-cursor 'yes'
+# Enable ('yes') or disable ('no') automatic teleportation of z4h over
+# ssh when connecting to these hosts.
+zstyle ':z4h:ssh:example-hostname1'   enable 'yes'
+zstyle ':z4h:ssh:*.example-hostname2' enable 'no'
+# The default value if none of the overrides above match the hostname.
+zstyle ':z4h:ssh:*'                   enable 'no'
+
+# Send these files over to the remote host when connecting over ssh to the
+# enabled hosts.
+zstyle ':z4h:ssh:*' send-extra-files '~/.tmux.conf' '~/.profile' '~/.hushlogin'
 
 # Clone additional Git repositories from GitHub.
 #
@@ -89,7 +95,6 @@ if type brew &>/dev/null; then
     . $(brew --prefix asdf)/asdf.sh
     . ~/.asdf/plugins/java/set-java-home.zsh
   fi
-  
 fi
 
 # Define key bindings.
@@ -131,12 +136,12 @@ function colors () {
   done
 }
 
-function tmux () {
-  if [[ ! -d ~/.tmux/plugins/tpm ]]; then 
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-  fi
-  command tmux "$@" 
-}
+# function tmux () {
+#   if [[ ! -d ~/.tmux/plugins/tpm ]]; then 
+#     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+#   fi
+#   command tmux "$@" 
+# }
 
 function yeet () {
   (nohup yeet "$@" &>/dev/null &)
@@ -169,6 +174,7 @@ if [[ $OSTYPE == darwin* ]]; then
   alias bic='brew install --cask --no-quarantine '
   alias sed='gsed'
   alias grep='ggrep'
+  alias units='gunits'
 fi
 
 alias ls='ls -Alh --color=auto'
