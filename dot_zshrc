@@ -19,7 +19,7 @@ zstyle ':z4h:bindkey' keyboard  'mac'
 # Mark up shell's output with semantic information.
 zstyle ':z4h:' term-shell-integration 'yes'
 
-zstyle ':z4h:' start-tmux 'yes'
+zstyle ':z4h:' start-tmux 'no'
 
 # Right-arrow key accepts one character ('partial-accept') from
 # command autosuggestions or the whole thing ('accept')?
@@ -84,6 +84,7 @@ export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export LC_CTYPE=UTF-8
 export XDG_CONFIG_HOME=$HOME/.config
+export EDITOR=nvim
 if [[ -d $HOME/.local/share/perl5/lib/perl5 ]]; then
   eval "$(perl -I$HOME/.local/share/perl5/lib/perl5 -Mlocal::lib=$HOME/.local/share/perl5)" &>/dev/null
 fi

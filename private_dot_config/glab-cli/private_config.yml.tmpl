@@ -1,0 +1,13 @@
+git_protocol: https
+glamour_style: dark
+check_update: false # updates are managed by brew
+display_hyperlinks: true
+host: gitlab.metamorphic-digital.com
+no_prompt: false
+hosts:
+    gitlab.metamorphic-digital.com:
+        token: {{ onepasswordRead "op://Private/MetaMorphic Gitlab/Security/master token" }}
+        api_host: gitlab.metamorphic-digital.com
+        git_protocol: https
+        api_protocol: https
+        user: {{ onepasswordRead "op://Private/MetaMorphic Gitlab/username" }}
