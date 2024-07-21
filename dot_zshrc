@@ -224,3 +224,4 @@ export PATH="$VOLTA_HOME/bin:$PATH"
 # zoxide cd replacement
 eval "$(zoxide init --cmd cd zsh)"
 eval "$(gh copilot alias -- zsh)"
+
