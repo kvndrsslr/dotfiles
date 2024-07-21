@@ -52,7 +52,7 @@ z4h install ohmyzsh/ohmyzsh || return
 BASE16_SHELL="$HOME/.config/base16-shell/"
 [ -v USE_BASE16_SHELL ] && [ -n "$PS1" ] && \
     [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
-        eval "$("$BASE16_SHELL/profile_helper.sh")"
+       source "$BASE16_SHELL/profile_helper.sh"
 
 # Install or update core components (fzf, zsh-autosuggestions, etc.) and
 # initialize Zsh. After this point console I/O is unavailable until Zsh
