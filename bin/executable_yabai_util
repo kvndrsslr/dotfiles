@@ -1,0 +1,318 @@
+#!/usr/bin/env zsh
+# transparency and border control all-in-one
+
+export PATH=/usr/local/opt/findutils/libexec/gnubin:$PATH
+
+## Refresh Rules
+__refresh_rules() {
+  # yabai -m rule --add label="tweetbot helper windows" app="^Tweetbot$" title="^$" manage=off
+  yabai -m rule --list | jq -er '.[].label' | xargs -I {} yabai -m rule --remove '{}'
+  yabai -m rule --add label="GitDock" app="^GitDock$" manage=off sticky=on opacity=0.9
+  yabai -m rule --add label="unmanaged apps" manage=off app="^(Ableton|Blitz|BIAS FX 2|Yousician|ROLI Connect|JetBrains Toolbox|Steam)$"
+  yabai -m rule --add label="sticky topmost apps" manage=off sticky=on app="^System Settings|Vitamin-R 3|Wally|ColorSlurp$"
+  yabai -m rule --add label="video and gaming apps in pip mode" manage=off sticky=on opacity=1.0 app="^VLC|mpv$|^(Riot Client)|(League Client)|(League of)|(League Of)"
+  # no borders in safari fullscreen
+  yabai -m rule --add label="Safari" app="^Safari$" title="^()$" 
+  yabai -m rule --add label="Vivaldi PIP" app="^Vivaldi$" title="^(Picture in Picture)$" manage=off 
+  yabai -m rule --add label="Teams Notifications" app="^Microsoft Teams$" title="^Microsoft Teams Notification$" manage=off 
+}
+
+__refresh_signals() {
+  __clear_signals
+  yabai -m signal --add event=window_title_changed label="sb_atc" action='sketchybar --trigger yabai_update ONLY=title YABAI_WINDOW_ID=$YABAI_WINDOW_ID' active=yes
+  yabai -m signal --add event=window_focused label="sb_wf" action="sketchybar --trigger yabai_update"
+  # yabai -m signal --add event=window_created label="sb_wos" action="sketchybar --trigger windows_on_spaces"
+  yabai -m signal --add event=space_changed label="sb_sc" action="sketchybar --trigger yabai_update"
+  # yabai -m signal --add event=window_destroyed label="sb_wos2" action="sketchybar --trigger windows_on_spaces"
+  yabai -m signal --add event=window_created app="^Keyboard Maestro Engine" label="kme" action="${HOME}/bin/yabai_util center_keyboard_maestro_engine_window"
+  #yabai -m signal --add event=space_changed label="native-fullscreen-fix" action="${HOME}/bin/yabai_util space_changed"
+}
+
+__clear_signals () {
+  yabai -m signal --list | jq -er '.[].label' | xargs -I {} yabai -m signal --remove '{}'
+}
+
+__switch_workspace () {
+  # yabai -m query --spaces | jq -er '['"${1}"'] as $a | map(select(.label | IN($a[]))) | sort_by(."has-focus") | .[].index' | xargs say
+  spaces=$(yabai -m query --spaces)
+  display=$(echo "$spaces" | jq -er '['"${1}"'] as $a | sort_by(."has-focus") | .[-1].display')
+  focusId=$(echo "$spaces" | jq -er '['"${1}"'] as $a | map(select(.label | IN($a[]))) | map(select(.display == '"$display"')) | sort_by(."has-focus") | .[-1].index')
+  otherIds=$(echo "$spaces" | jq -er '['"${1}"'] as $a | map(select(.label | IN($a[]))) | map(select(.display != '"$display"')) | sort_by(."has-focus") | .[].index')
+  echo -e "${otherIds}\n${focusId}" | xargs -I {} yabai -m space --focus {}
+}
+
+__cycle_space_windows () {
+  if [[ "$1" == "--reverse" ]]; then
+    yabai -m window --focus prev || yabai -m window --focus last
+    yabai -m window --focus stack.prev || yabai -m window --focus stack.last
+  else
+    yabai -m window --focus next || yabai -m window --focus first
+    yabai -m window --focus stack.next || yabai -m window --focus stack.first
+  fi
+  exit 0
+  
+  
+  set -o pipefail
+  [[ "$1" == "--reverse" ]] && reverse="| reverse "
+  yabai -m query --windows --space  \
+  | jq -re "map(select(.minimized != 1)) ${reverse}| nth(index(map(select(.\"has-focus\" == true))) - 1).id" \
+  | xargs -I{} yabai -m window --focus {} || yabai -m window --focus first
+}
+
+__swaprotate_space_windows () {
+  set -o pipefail
+  [[ "$1" == "--reverse" ]] || reverse="| reverse "
+  yabai -m query --windows --space  | \
+  jq -re '
+    map(select(.minimized != 1))
+    | sort_by(.display, .frame.x, .frame.y, ."stack-index", .id)
+    '"$reverse"'
+    | first as $first
+    | map( $first.id, .id )
+    | .[]' | \
+  tail -n +3 | \
+  xargs -n2 sh -c 'yabai -m window $1 --swap $2' sh
+}
+
+__cycle_display_spaces () {
+  if [[ "$1" == "--reverse" ]] then 
+    dir="left"
+  else 
+    reverse="| reverse "
+    dir="right"
+  fi
+  
+  i=$(yabai -m query --spaces --display | jq -re "sort_by(.index) ${reverse}| nth(index(map(select(.\"has-focus\" == true))) - 1).index")
+  #yabai -m window "$(yabai -m query --windows --space "$i" | jq -r 'map(select(."is-sticky" == false)).[0].id')" --focus || yabai -m space --focus "$i" || skhd -k 'ctrl - right'
+  yabai -m space --focus "$i" || skhd -k "ctrl - ${dir}"
+}
+
+__cycle_displays () {
+  [[ "$1" == "--reverse" ]] && reverse="| reverse "
+  currentDisplay=$(yabai -m query --spaces --space | jq -re ".display")
+  yabai -m query --displays \
+  | jq -re "sort_by(.index) ${reverse}| nth(index(map(select(.index == ${currentDisplay}))) - 1).index" \
+  | xargs -I{} yabai -m display --focus {}
+}
+
+__generate_skhdrc () {
+  set -o pipefail
+  modes=$(cat "${HOME}/.skhdrc.template" | ggrep -oP '^:: \K\w+' | xargs | gsed -e 's/passthrough//g' | gsed -E 's/\s+(\w)/, \1/g')
+  cat "${HOME}/.skhdrc.template" \
+  | sed -e 's/^<<</'"$modes"' < /g' \
+      -e 's/:::=>/: skhd -k escape \&\& "$HOME\/bin\/yabai_util"/g' \
+      -e 's/:::==>/: skhd -k escape \&\& skhd -k escape \&\& "$HOME\/bin\/yabai_util"/g' \
+      -e 's/:=>/: skhd -k escape \&\& /g'\
+      -e 's/:==>/: skhd -k escape \&\& skhd -k escape \&\& /g' \
+      -e 's/:::/: "$HOME\/bin\/yabai_util"/g' \
+      -e 's/&&&/\&\& "$HOME\/bin\/yabai_util"/g' \
+      -e '/^#.*$/d' \
+      -e '/^$/d' \
+      -e 's/\;\;\;/\&\& skhd -k escape/g' \
+    > "${HOME}/.skhdrc"
+}
+
+__get_dark_mode () {
+  darkMode=$(osascript -l JavaScript -e 'Application("System Events").appearancePreferences.darkMode();')
+  if [[ "$darkMode" == "true" ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+__get_wallpaper_for_display () {
+  __return_wallpaper_path () {
+    if __get_dark_mode ; then
+      echo "$1"
+    else
+      echo "$2"
+    fi
+  }
+  case "$1" in
+    69962632)
+      __return_wallpaper_path \
+      "${HOME}/Pictures/Wallpaper/synths_5k.png" \
+      "${HOME}/Pictures/Wallpaper/bright.png"
+      # "${HOME}/Pictures/Wallpaper/arun-clarke-office-building-5k.png" \
+      ;;
+    1892420674)
+      __return_wallpaper_path \
+      "${HOME}/Pictures/Wallpaper/bottleneck_16x10.png" \
+      "${HOME}/Pictures/Wallpaper/bright.png"
+      # "${HOME}/Pictures/Wallpaper/zhewen-zheng-bridge-16x10-horizontal.png" \
+      ;;
+    1892420673)
+      __return_wallpaper_path \
+      "${HOME}/Pictures/Wallpaper/piano_16x10.png" \
+      "${HOME}/Pictures/Wallpaper/bright.png"
+      # "${HOME}/Pictures/Wallpaper/andrej-lisakov-16x10.png" \
+      ;;
+    *)
+      __return_wallpaper_path \ 
+      "${HOME}/Pictures/Wallpaper/dark.png" \
+      "${HOME}/Pictures/Wallpaper/bright.png"
+      # "${HOME}/Pictures/Wallpaper/andre-benz-subway-5k-darker.png" \
+      ;;
+  esac
+}
+
+__set_wallpaper_global () {
+  # prefix="/Users/kvn/Pictures/bg${1}"
+displays=`yabai -m query --displays | jq ".[].index"`
+for display in "${(f)displays}"; do
+  id=`yabai -m query --displays | jq ".[] | select(.index == ${display}) | .id"`
+  spaces=`yabai -m query --spaces | jq ".[] | select(.display == ${display}) | .index"`
+  visible=`yabai -m query --spaces | jq ".[] | select(.display == ${display}) | select(.visible == 1) | .index"`
+  # width=`yabai -m query --displays | jq ".[] | select(.index == ${display}) | .frame.w"`
+  # if [[ $width -gt 1920 ]]; then
+  #   pic="${prefix}-retina.png"
+  # else
+  #   pic="${prefix}.png"
+  # fi
+  # say "$pic"
+  pic=$(__get_wallpaper_for_display "$id")
+  for space in "${(f)spaces}"; do
+    yabai -m space --focus $space
+    osascript -e 'tell application "System Events" to set picture of (first desktop whose id is "'"${id}"'") to  "'"${pic}"'"'
+    echo 'tell application "System Events" to set picture of (first desktop whose id is "'"${id}"'") to  "'"${pic}"'"'
+  done
+  yabai -m space --focus $visible
+done
+}
+
+__set_wallpaper () {
+  id=`yabai -m query --displays --display | jq ".id"`
+  # todo: choose picture by display settings not hard by id
+  image=$(__get_wallpaper_for_display "$id")
+  osascript -e 'tell application "System Events" to set picture of (first desktop whose id is "'"${id}"'") to  "'"${image}"'"'
+}
+
+__set_mode_indicator () {
+  allBrightColors=(83A598 B8BB26 FABD2F FE8019 FB4934 D3869B 8EC07C)
+  allColors=(458588 98971A D79921 D65D0E CC241D B16286 689D6A)
+  if [[ "$1" == "-" ]]; then
+    B_W=0
+    if __get_dark_mode ; then
+      Y_CLR="79740E"
+      B_CLR="b8bb26"
+    else 
+      Y_CLR="fabd2f"
+      B_CLR="504945"
+    fi
+  else
+   B_W=2
+    if __get_dark_mode ; then
+      Y_CLR="${allColors[$1]}"
+      B_CLR="${allBrightColors[$1]}"
+    else
+      Y_CLR="${allBrightColors[$1]}"
+      B_CLR=$Y_CLR
+    fi
+  fi
+  echo "$Y_CLR" > /tmp/yabai-mode
+  # sketchybar --bar border_color="0xff${B_CLR}" border_width=${B_W}
+  sketchybar --set '/space\.*/' icon.highlight_color="0xff${B_CLR}"
+  # yabai -m config active_window_border_color "0xff${Y_CLR}"
+  # yabai -m query --displays | jq -re '.[].index' | xargs -I '{}' sh -c "yabai -m query --spaces --display {} | jq -re '.[] | select(.\"is-visible\") | .index'" | xargs -I '{}' sketchybar --set "space.{}" background.color="0xff${B_CLR}"
+}
+
+__toggle_opacity () {
+  if [[ "$(yabai -m config window_opacity)" == "on" ]]; then
+    yabai -m config window_opacity off
+  else
+    yabai -m config window_opacity on
+  fi
+}
+
+__cycle_padding () {
+  if [[ "$(yabai -m config top_padding)" == "38" ]]; then
+    yabai -m config top_padding 30
+    yabai -m config right_padding 0
+    yabai -m config left_padding 0
+    yabai -m config bottom_padding 0
+    yabai -m config window_gap 2
+  else
+    yabai -m config top_padding 38
+    yabai -m config right_padding 5
+    yabai -m config left_padding 5
+    yabai -m config bottom_padding 5
+    yabai -m config window_gap 5
+  fi
+}
+
+__toggle_window_opacity () {
+  current_opacity=$(yabai -m query --windows --window | jq '.opacity')
+  if (( $current_opacity == 1.0000 )) ; then
+    yabai -m window --opacity 0.0
+  else
+    yabai -m window --opacity 1.0
+  fi
+}
+
+__center_keyboard_maestro_engine_window () {
+  new_id="$1"
+  read id space x y w h < <(echo $(yabai -m query --windows --window | jq -er '.id, .space, .frame.x, .frame.y, .frame.w, .frame.h' | sed -e 's/\..*//g'))
+  read w2 h2 < <(echo $(yabai -m query --windows --window "$new_id" | jq -er '.frame.w, .frame.h' | sed -e 's/\..*//g'))
+  if [[ "$id" -eq "$new_id" ]]; then
+    read id space x y w h < <(echo $(yabai -m query --windows --window recent | jq -er '.id, .space, .frame.x, .frame.y, .frame.w, .frame.h' | sed -e 's/\..*//g'))
+  fi
+  yabai -m window "$new_id" --space "$space"
+  yabai -m window "$new_id" --move "abs:$(( $x + ( $w - $w2 ) / 2 )):$(( $y + ( $h - $h2 ) / 2 ))"
+}
+
+cmd="$1"
+shift
+case "$cmd" in
+  space_changed)
+    __space_changed "$YABAI_SPACE_ID" "$YABAI_RECENT_SPACE_ID"
+    ;;
+  refresh_rules)
+    __refresh_rules "$@"
+    ;;
+  refresh_signals)
+    __refresh_signals
+    ;;
+  setup_spaces)
+    __setup_spaces
+    ;;
+  clear_signals)
+    __clear_signals
+    ;;
+  switch_workspace)
+    __switch_workspace "$@"
+    ;;
+  cycle_space_windows)
+    __cycle_space_windows "$@"
+    ;;
+  cycle_display_spaces)
+    __cycle_display_spaces "$@"
+    ;;
+  cycle_displays)
+    __cycle_displays "$@"
+    ;;
+  generate_skhdrc)
+    __generate_skhdrc
+    ;;
+  set_wallpaper)
+    __set_wallpaper
+    ;;
+  set_mode_indicator)
+    __set_mode_indicator "$@"
+    ;;
+  toggle_opacity)
+    __toggle_opacity
+    ;;
+  toggle_window_opacity)
+    __toggle_window_opacity
+    ;;
+  cycle_padding)
+    __cycle_padding
+    ;;
+  center_keyboard_maestro_engine_window)
+    __center_keyboard_maestro_engine_window "$YABAI_WINDOW_ID"
+    ;;
+  set_wallpaper_global)
+    __set_wallpaper_global
+    ;;
+esac

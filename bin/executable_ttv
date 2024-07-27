@@ -1,0 +1,2 @@
+#!/usr/bin/env zsh
+streamlink twitch.tv/"${1}" best >/dev/null 2>&1 &!

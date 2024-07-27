@@ -1,0 +1,42 @@
+#!/usr/bin/env sh
+# load scripting additions
+#launchctl unload -F /System/Library/LaunchAgents/com.apple.WindowManager.plist > /dev/null 2>&1 &
+#sudo yabai --load-sa
+
+# global settings
+yabai -m config mouse_follows_focus off \
+  focus_follows_mouse off \
+  window_placement second_child
+yabai -m config window_shadow off
+yabai -m config window_opacity off
+yabai -m config active_window_opacity 0.97
+yabai -m config normal_window_opacity 0.93
+# yabai -m config window_border                off
+# yabai -m config window_border_blur           off
+# yabai -m config window_border_width          2
+# yabai -m config normal_window_border_color   0x001
+# yabai -m config active_window_border_color   0xff79740E
+# yabai -m config window_border_radius 6
+# yabai -m config window_border_hidpi on
+yabai -m config insert_feedback_color 0xffd75f5f
+yabai -m config split_ratio 0.50
+yabai -m config auto_balance off
+yabai -m config mouse_modifier fn
+yabai -m config mouse_action1 move
+yabai -m config mouse_action2 resize
+yabai -m config mouse_drop_action swap
+
+# general space settings
+yabai -m config layout stack
+yabai -m config top_padding 0
+yabai -m config bottom_padding 0
+yabai -m config left_padding 0
+yabai -m config right_padding 0
+yabai -m config window_gap 3
+yabai -m config external_bar all:33:0
+
+# rules
+"${HOME}"/bin/yabai_util refresh_rules
+
+# signals
+"${HOME}"/bin/yabai_util refresh_signals

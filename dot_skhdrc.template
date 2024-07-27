@@ -1,0 +1,124 @@
+############################################################################@
+############## MODES DECLARATION #########################################@
+########################################################################@
+
+:: default      ::: set_mode_indicator -
+:: op @         ::: set_mode_indicator 1
+:: wmode @      ::: set_mode_indicator 2
+:: smode @      ::: set_mode_indicator 3
+:: passthrough  ::: set_mode_indicator 6
+
+default, passthrough < meh - escape ; op
+op < escape ; default
+smode, wmode < escape ; op
+op < w ; wmode
+op < s ; smode
+#op < p ; passthrough
+
+############################################################################@
+############## DEFAULT ###################################################@
+########################################################################@
+
+default < hyper - 0x24 : open -a "Arc" --args --remote-debugging-port=9222 #/Applications/Vivaldi.app/Contents/MacOS/Vivaldi --new-window "" --remote-debugging-port=9222
+default < hyper - space : open -a "Visual Studio Code"
+
+default < cmd + ctrl - 1 : yabai -m display --focus 2
+default < cmd + ctrl - 2 : yabai -m display --focus 1
+default < cmd + ctrl - 3 : yabai -m display --focus 3
+default < cmd + ctrl - 4 : yabai -m display --focus 4
+
+default < cmd + ctrl + shift - 1 : yabai -m window --display 2
+default < cmd + ctrl + shift - 2 : yabai -m window --display 1
+default < cmd + ctrl + shift - 3 : yabai -m window --display 3
+default < cmd + ctrl + shift - 4 : yabai -m window --display 4
+
+default < cmd + alt - tab : yabai -m window --focus recent
+
+
+############################################################################@
+############## GLOBAL ####################################################@
+########################################################################@
+
+<<< cmd - tab                      ::: cycle_space_windows
+<<< cmd + shift - tab              ::: cycle_space_windows --reverse
+<<< cmd + ctrl - tab         ::: cycle_displays
+<<< cmd + ctrl + shift - tab ::: cycle_displays --reverse
+<<< ctrl + alt - tab                 : yabai -m window --focus $(yabai -m query --windows | jq -er '.[0].app as $current_app |map(select(.app==$current_app))[1].id')
+
+<<< hyper - z                        : yabai -m window --toggle zoom-fullscreen
+<<< hyper - f                        : yabai -m window --toggle native-fullscreen
+<<< hyper - v                        : read x y w h < <(echo $(yabai -m query --displays --window | jq -er '.frame.x, .frame.y, .frame.w, .frame.h' | sed -e 's/\..*//g')) && \
+                                       yabai -m window --move "abs:${x}:${y}" && \
+                                       yabai -m window --resize "abs:${w}:${h}"
+<<< hyper - m                        : yabai -m window --toggle float && yabai -m window --toggle sticky && yabai -m window --toggle topmost
+<<< hyper - w                        : yabai -m window --toggle expose
+<<< hyper - l                        ::: cycle_display_spaces #yabai -m space --focus next || skhd -k 'ctrl - right'
+<<< hyper - h                        ::: cycle_display_spaces --reverse #yabai -m space --focus prev || skhd -k 'ctrl - left'
+
+############################################################################@
+############## MODE 1 ####################################################@
+########################################################################@
+
+op < k : kitty -d "$HOME" --single-instance --listen-on unix:/tmp/mykitty
+op < g ::: generate_skhdrc &&& set_mode_indicator -
+op < r ::: refresh_rules &&& refresh_signals
+# op < n ::: switch_workspace '"stonks","pkms","gtd"'
+# op < m ::: switch_workspace '"term","dev","browse"'
+op < y :=> yabai -m query --windows | pbcopy
+op < t ::: toggle_opacity
+op < b ::: cycle_padding
+op < q ::: set_wallpaper_global
+op < 5 :=> screencapture -ixc
+
+############################################################################@
+############## MODE 2 ####################################################@
+########################################################################@
+
+wmode < h : yabai -m window --swap west
+wmode < j : yabai -m window --swap south
+wmode < k : yabai -m window --swap north
+wmode < l : yabai -m window --swap east
+
+wmode < shift - h : yabai -m window --warp west
+wmode < shift - j : yabai -m window --warp south
+wmode < shift - k : yabai -m window --warp north
+wmode < shift - l : yabai -m window --warp east
+
+wmode < y : yabai -m window mouse --insert west
+wmode < u : yabai -m window mouse --insert south
+wmode < i : yabai -m window mouse --insert north
+wmode < o : yabai -m window mouse --insert east
+
+wmode < shift - y : yabai -m window mouse --insert west && yabai -m window --space mouse
+wmode < shift - u : yabai -m window mouse --insert south && yabai -m window --space mouse
+wmode < shift - i : yabai -m window mouse --insert north && yabai -m window --space mouse
+wmode < shift - o : yabai -m window mouse --insert east && yabai -m window --space mouse
+wmode < shift - p : yabai -m window mouse --insert stack && yabai -m window --space mouse
+
+wmode < t ::: toggle_window_opacity
+
+############################################################################@
+############## MODE 3 ####################################################@
+########################################################################@
+
+smode < r : yabai -m space --rotate 90
+smode < b : yabai -m space --balance 
+smode < d : yabai -m space --toggle show-desktop
+#smode <  : yabai -m space --toggle padding
+#smode <  : yabai -m space --toggle gap
+#smode <  : yabai -m space --toggle mission-control
+#--mirror x-axis|y-axis
+#--destroy
+#--create
+#--focus #? do we want direct focus?
+
+
+
+smode < 1 : yabai -m space --layout bsp
+smode < 2 : yabai -m space --layout stack
+smode < 3 : yabai -m space --layout float
+
+smode < h : yabai -m space --display west &&& set_wallpaper
+smode < j : yabai -m space --display south &&& set_wallpaper
+smode < k : yabai -m space --display north &&& set_wallpaper
+smode < l : yabai -m space --display east &&& set_wallpaper

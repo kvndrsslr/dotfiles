@@ -1,0 +1,52 @@
+#!/bin/bash
+DISPLAY=$1
+
+if [[ "$DISPLAY" == 2 ]] || [[ -z "$DISPLAY" ]]; then
+  echo "Need to supply external display index (1 or 3)"
+  exit 1
+fi
+
+function getId() {
+  case $1 in
+    1) echo "E700FB62-66CB-9F9F-99D0-4AFFA5A7273B" ;;
+    2) echo "1FE75AE2-F00B-6C64-930A-9BCE7DCA5C12" ;;
+    3) echo "4B59E98A-8ACD-E297-2C55-A02980444B6A" ;;
+  esac
+}
+
+function getRes() {
+  displayplacer list | ggrep -oP "id:${1} res:\K\w+"
+}
+
+function getDegree() {
+  displayplacer list | ggrep -oP "id:${1} res:.*?degree:\K\w+"
+}
+
+function getComponent() {
+  echo "$1" | gsed -E 's/^(.*)x(.*)/\'"$2"'/'
+}
+
+function rotate() {
+  case $1 in
+    0) echo 90 ;;
+    90) echo 0 ;;
+  esac
+}
+
+# get current rotation
+deg1=$(getDegree `getId 1`)
+deg2=$(getDegree `getId 2`)
+deg3=$(getDegree `getId 3`)
+
+# lets rotate target display
+targetVar="deg${DISPLAY}"
+declare "${targetVar}=$(rotate ${!targetVar})"
+
+# compute offsets
+rightOffsetX=$(getComponent $(getRes `getId 2`) 1)
+leftOffsetX=-$(getComponent $(getRes `getId 1`) 1)
+
+# send it
+displayplacer "id:$(getId 1) mode:1 origin:(${leftOffsetX},0) degree:${deg1}"\
+              "id:$(getId 2) mode:1 origin:(0,0) degree:${deg2}"\
+              "id:$(getId 3) mode:1 origin:(${rightOffsetX},0) degree:${deg3}"
