@@ -1,3 +1,0 @@
-player=/opt/homebrew/bin/mpv
-player-args=--cache 2048 --hwdec=auto
-player-no-close

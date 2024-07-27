@@ -1,0 +1,3 @@
+player=/{{ if eq .chezmoi.arch "arm64" }}opt/homebrew{{ else }}usr/local{{ end }}/bin/mpv
+player-args=--cache 2048 --hwdec=auto
+player-no-close
